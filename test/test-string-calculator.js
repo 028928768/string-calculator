@@ -14,7 +14,12 @@ function itAlwaysBe2() {
 }
 function itShouldbeZero(){
   const cal = new Calculator();
-  expect(cal.calculate('')).to.be.equal(0);
+  expect(cal.calculate('')).to.be.equal(0); 
+  expect(cal.calculate(2)).to.be.equal(2);
+  expect(cal.calculate(3)).to.be.equal(3);
+  expect(cal.calculate("1,2")).to.be.equal(3);
+  expect(cal.calculate("1\n2")).to.be.equal(3);
+ // expect(cal.calculate("Kantachat").to.be.equal())
 }
 
 // Start Example Behaviors
