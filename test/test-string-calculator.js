@@ -19,7 +19,8 @@ function itShouldbeZero(){
   expect(cal.calculate(3)).to.be.equal(3);
   expect(cal.calculate("1,2")).to.be.equal(3);
   expect(cal.calculate("1\n2")).to.be.equal(3);
- // expect(cal.calculate("Kantachat").to.be.equal())
+  expect(cal.calculate("1,2,3")).to.be.equal(6);
+  expect(cal.calculate("1\n2\n3")).to.be.equal(6);
 }
 
 // Start Example Behaviors

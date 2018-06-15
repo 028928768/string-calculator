@@ -1,0 +1,130 @@
+--nogDB
+#include <nogdb/nogdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+using namespace std;
+nogdb::RecordDescriptor AddDataToRecord(char Name,int year,nogdb::Txn txn){
+    nogdb::Record studentRec{};
+    
+    studentRec.set("Name",Name);
+    studentRec.set("Year",year);
+    nogdb::RecordDescriptor X=nogdb::Vertex::create(txn,"Student",studentRec);
+    return X;
+    
+    
+}
+nogdb::RecordDescriptor AddSubjectRecord(string name,nogdb::Txn txn){
+    nogdb::Record SubjectRec{};
+    
+    SubjectRec.set("Name",name);
+    nogdb::RecordDescriptor Y=nogdb::Vertex::create(txn,"Subject",SubjectRec);
+    return Y;
+}
+nogdb::RecordDescriptor AddClassroomRecord(string name,nogdb::Txn txn){
+    nogdb::Record SubjectRec{};
+    
+    SubjectRec.set("Name",name);
+    nogdb::RecordDescriptor Z=nogdb::Vertex::create(txn,"Classroom",SubjectRec);
+    return Z;
+}
+nogdb::RecordDescriptor AddtoSubbject_Classroom (nogdb::RecordDescriptor subject_src,nogdb::RecordDescriptor classroom_dst, string day,int start_time,int end_time,nogdb::Txn txn){
+    nogdb::Record Subject_classroomRec{};
+    
+    Subject_classroomRec.set("day",day);
+    Subject_classroomRec.set("timestart",start_time);
+    Subject_classroomRec.set("timeend",end_time);
+    nogdb::RecordDescriptor A=nogdb::Edge::create(txn,"subject_classroom",subject_src,classroom_dst,Subject_classroomRec);
+    return A;
+}
+
+
+int  main (int argc, char* argv[]) {
+    nogdb::Context ctx{"mygraph.db", 128, 4294967296UL};
+    
+    try{
+        nogdb::Txn txn(ctx,nogdb::Txn::Mode::READ_WRITE);
+        
+        nogdb::Class::create(txn,"Person", nogdb::ClassType::VERTEX);
+        
+        //create student extended peroson
+        nogdb::Class::createExtend(txn,"Student","Person");
+        //create name property
+        nogdb::Property::add(txn,"Person","Name", nogdb::PropertyType::TEXT);
+        //create age property
+        nogdb::Property::add(txn,"Person","Age", nogdb::PropertyType::INTEGER);
+        
+        //create subject
+        nogdb::Class::create(txn, "Subject", nogdb::ClassType::VERTEX);
+        
+        //create classroom
+        nogdb::Class::create(txn ,"Classroom", nogdb::ClassType::VERTEX);
+        //classroom.prop
+        nogdb::Class::create(txn, "subject_classroom", nogdb::ClassType::EDGE);
+        nogdb::Property::add(txn, "subject_classroom","day" ,nogdb::PropertyType::TEXT);
+        nogdb::Property::add(txn,"subject_classroom","timestart", nogdb::PropertyType::INTEGER);
+        nogdb::Property::add(txn,"subject_classroom","timeend" ,nogdb::PropertyType::INTEGER);
+        nogdb::Property::add(txn,"Classroom","Name",nogdb::PropertyType::TEXT);
+        
+        nogdb::Class::create(txn, "student_subject", nogdb::ClassType::EDGE);
+        nogdb::Property::add(txn, "studen_subject","score" ,nogdb::PropertyType::INTEGER);
+        
+        //subject-name prop
+        nogdb::Property::add(txn,"Subject","Name", nogdb::PropertyType::TEXT);
+        //create year-studet prop
+        nogdb::Property::add(txn,"Student","Year", nogdb::PropertyType::INTEGER);
+        
+        
+        
+        
+       
+        nogdb::RecordDescriptor vStudent1 = AddDataToRecord('A',1,txn);
+        nogdb::RecordDescriptor vStudent2 = AddDataToRecord('B',1,txn);
+        nogdb::RecordDescriptor vStudent3 = AddDataToRecord('C',1,txn);
+        nogdb::RecordDescriptor vStudent4 = AddDataToRecord('D',2,txn);
+        nogdb::RecordDescriptor vStudent5 = AddDataToRecord('E',2,txn);
+        nogdb::RecordDescriptor vStudent6 = AddDataToRecord('F',3,txn);
+        nogdb::RecordDescriptor vStudent7 = AddDataToRecord('G',3,txn);
+        nogdb::RecordDescriptor vStudent8 = AddDataToRecord('H',4,txn);
+        
+        nogdb::RecordDescriptor vSubject1 = AddSubjectRecord("Math",txn);
+        nogdb::RecordDescriptor vSubject2 = AddSubjectRecord("Physic",txn);
+        nogdb::RecordDescriptor vSubject3 = AddSubjectRecord("English",txn);
+        nogdb::RecordDescriptor vSubject4 = AddSubjectRecord("Biology",txn);
+        
+        nogdb::RecordDescriptor vClassroom1 = AddClassroomRecord("C-101", txn);
+        nogdb::RecordDescriptor vClassroom2 = AddClassroomRecord("C-102", txn);
+        nogdb::RecordDescriptor vClassroom3 = AddClassroomRecord("C-103", txn);
+        // Set property to classroom and subject
+        nogdb::RecordDescriptor vEdge1_1 = AddtoSubbject_Classroom(vSubject1,vClassroom1,"Monday",540,720,txn);
+        nogdb::RecordDescriptor vEdge1_2 = AddtoSubbject_Classroom(vSubject1,vClassroom1,"Friday",540,720,txn);
+        
+        nogdb::RecordDescriptor vEdge2_1 = AddtoSubbject_Classroom(vSubject1,vClassroom2,"Monday",780,960,txn);
+        nogdb::RecordDescriptor vEdge2_2 = AddtoSubbject_Classroom(vSubject1,vClassroom2,"Tuesday",780,960,txn);
+        
+        
+        nogdb::RecordDescriptor vEdge4 = AddtoSubbject_Classroom(vSubject2,vClassroom1,"Tuesday",540,720,txn);
+        
+        nogdb::RecordDescriptor vEdge7_1 = AddtoSubbject_Classroom(vSubject3,vClassroom1,"Monday",780,960,txn);
+        nogdb::RecordDescriptor vEdge7_2 = AddtoSubbject_Classroom(vSubject3,vClassroom1,"Wednesday",780,960,txn);
+        
+        nogdb::RecordDescriptor vEdge10_1 = AddtoSubbject_Classroom(vSubject1,vClassroom1,"Tuesday",780,960,txn);
+        nogdb::RecordDescriptor vEdge10_2 = AddtoSubbject_Classroom(vSubject1,vClassroom1,"Wednesday",540,720,txn);
+        nogdb::RecordDescriptor vEdge10_3 = AddtoSubbject_Classroom(vSubject4,vClassroom1,"Friday",780,960,txn);
+        
+        std::cout << vStudent1.rid << std::endl;
+        
+        txn.commit();
+        
+        
+       // nogdb::Edge::create(txn,"subject_classroom",vSubject1,vClassroom1);
+       // nogdb::Edge::create(txn,"subject_classroom",vSubject1,vClassroom1);
+       // nogdb::Edge::create(txn,"subject_classroom",vSubject1,vClassroom1);
+       // nogdb::Edge::create(txn,"subject_classroom",vSubject1,vClassroom1);
+        
+        
+    } catch ( nogdb::Error& err ) {
+        std::cerr << err.code() << " " << err.what() << std::endl;
+    }
+    
+    
+}

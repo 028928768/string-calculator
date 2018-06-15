@@ -17,8 +17,8 @@ class Calculator {
             console.log('other strings')
             console.log('str = ' + str +'\n');
             var arr = str.split(/[\n/,]+/);
-            var a;
-            var b;
+            var a;var b;var c;
+            if(arr.lenght == 2){
             a=parseInt(arr[0]); 
             b=parseInt(arr[1]);
             console.log(a,b);
@@ -29,6 +29,19 @@ class Calculator {
             var sum2 = plus(a,b);
             return sum2;
             console.log("\n"+ sum2);
+           } else if(arr.lenght == 3){
+            a=parseInt(arr[0]);
+            b=parseInt(arr[1]);
+            c=parseInt(arr[2]);
+            console.log("three numbers:"+a,b,c);
+            function plusplus(a,b,c){
+                var plus1=a+b+c;
+                return plus1;
+            }
+            var plus2 = plusplus(a,b,c);
+            console.log("three number sum:"+plus2);
+            return plus2;
+           }
         }
         //else if(Number.isInteger(str)!= 0){
           //  return 
